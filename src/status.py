@@ -72,7 +72,7 @@ def build(cfg: dict) -> list[str]:
     ]
 
     inner = BOX_WIDTH - 4
-    rows = [ui.top_border(BOX_WIDTH, "mirror", palette)]
+    rows = [ui.top_border(BOX_WIDTH, f"mirror {core.VERSION}", palette)]
     rows.append(ui.row("", BOX_WIDTH, palette.fg, palette))
     rows.append(
         ui.row("STATUS".ljust(LABEL_WIDTH) + status_line, BOX_WIDTH, palette.fg, palette)
