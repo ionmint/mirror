@@ -5,3 +5,8 @@
 # text=auto alone stores them with LF, which is what a ZIP downloaded from
 # GitHub hands a Windows user. eol=crlf makes the checkout right everywhere.
 *.bat text eol=crlf
+
+# only a clone needs these; keep them out of every archive git produces,
+# including the ZIPs GitHub generates for a release
+.gitattributes  export-ignore
+.gitignore      export-ignore
