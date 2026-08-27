@@ -9,8 +9,9 @@ remember to write one.
 
 ## Install
 
-**Double click `install.bat`.** It finds Python, asks five questions, writes
-`config.json`, sets up autostart and launches Mirror.
+**[Download the latest release](https://github.com/ionmint/mirror/releases/latest)**,
+extract it anywhere, then **double click `install.bat`**. It finds Python, asks
+five questions, writes `config.json`, sets up autostart and launches Mirror.
 
 To move it to another PC: copy the folder (the `.bat` files and `src\` are enough,
 the rest is recreated) and run `install.bat` there.
@@ -20,6 +21,11 @@ it — the standard installer from python.org includes it. If Python is missing,
 `install.bat` says so and offers to open the download page — leave the *"Add
 python.exe to PATH"* box ticked while installing. Nothing else: no `pip`, no
 third party libraries.
+
+If you downloaded the ZIP, Windows asks once whether you trust `install.bat`:
+anything arriving from the internet carries a mark that says so. Confirm it, or
+right-click the ZIP → Properties → **Unblock** before extracting and the question
+never comes up.
 
 ## The six files you use
 
