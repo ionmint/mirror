@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# .bat files are read by cmd.exe and nothing else, so pin their line endings:
+# text=auto alone stores them with LF, which is what a ZIP downloaded from
+# GitHub hands a Windows user. eol=crlf makes the checkout right everywhere.
+*.bat text eol=crlf
