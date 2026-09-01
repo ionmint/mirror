@@ -16,6 +16,21 @@ import mirror_core as core
 MAX_INPUT_LINES = 12
 FONT_CANDIDATES = ("Cascadia Mono", "Consolas", "Lucida Console", "Courier New")
 
+VK_RSHIFT = 0xA1
+
+# the Windows virtual key of each key in core.PAUSE_KEYS. Tk hands it over as
+# event.keycode, and unlike the keysym it does not move with Shift, with Caps
+# Lock or with the layout: the Italian and the UK keyboard print different
+# symbols on these keys but report the same numbers
+PAUSE_KEY_CODES = {
+    **{letter: ord(letter.upper()) for letter in "yuiophjklnm"},
+    **{digit: ord(digit) for digit in "67890"},
+    **{f"f{number}": 0x70 + number - 1 for number in range(7, 13)},  # VK_F1 = 0x70
+    "-": 0xBD,  # VK_OEM_MINUS, defined as the '-' key of any layout
+    ",": 0xBC,  # VK_OEM_COMMA
+    ".": 0xBE,  # VK_OEM_PERIOD
+}
+
 
 # --------------------------------------------------------------------------- #
 # Windows helpers
@@ -79,6 +94,21 @@ def force_foreground(hwnd: int) -> None:
             user32.AttachThreadInput(other_thread, my_thread, False)
     except Exception as exc:
         core.log_error(f"could not bring the window to the front ({exc})")
+
+
+def right_shift_down() -> bool:
+    """Whether the right Shift is the one being held.
+
+    GetKeyState reads the state as of the keystroke being handled, so it answers
+    for that key press and not for whenever the question happens to be asked.
+    """
+    try:
+        user32 = ctypes.windll.user32
+        user32.GetKeyState.restype = ctypes.c_short
+        user32.GetKeyState.argtypes = [ctypes.c_int]
+        return user32.GetKeyState(VK_RSHIFT) < 0  # the high bit means held down
+    except Exception:
+        return False
 
 
 def toplevel_hwnd(window: tk.Misc) -> int:
@@ -265,7 +295,18 @@ class PromptWindow:
             self.pause_row, "[ PAUSE ]", self._pause, self.f_small
         ).pack(side="left", padx=(int(14 * scale), 0))
 
+        self._bind_pause_key()
         self._on_change()
+
+    def _bind_pause_key(self) -> None:
+        """The keyboard twin of the sheep, so the screen needs no mouse at all."""
+        self.pause_keycode = PAUSE_KEY_CODES.get(core.pause_key(self.cfg))
+        # the two input widgets get their own binding: only one bound there can
+        # swallow the keystroke before the character lands in the box. A plain
+        # <KeyPress> never shadows the bindings above it, Tk always runs the
+        # most specific pattern it has for the key
+        for widget in (self.text, self.pause_entry, self.window):
+            widget.bind("<KeyPress>", self._on_pause_key)
 
     def _make_button(self, parent, label, command, font, color=None) -> tk.Button:
         return tk.Button(
@@ -340,6 +381,14 @@ class PromptWindow:
             )
             return
         self._close("answer", 0)
+
+    def _on_pause_key(self, event):
+        if event.keycode != self.pause_keycode or not right_shift_down():
+            # every other key, and the left Shift, goes through untouched: that
+            # is what leaves the character itself still typeable
+            return None
+        self._toggle_pause()
+        return "break"
 
     def _toggle_pause(self) -> None:
         """The sheep stays put and works as a switch, both ways."""

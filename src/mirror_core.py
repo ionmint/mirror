@@ -34,10 +34,20 @@ TICK_SECONDS = 5           # how often the clock is checked
 SHEEP_EMOJI = "\U0001F411"
 SHEEP_ASCII = "{~^..^}"
 
+# the right Shift and one of these open the pause row: the keyboard twin of the
+# sheep button. They all sit on the right of an Italian or a UK keyboard, under
+# the same hand as the right Shift - and out of the way of typing, because the
+# shifted character of a right hand key is one you reach for with the left Shift
+PAUSE_KEYS = (
+    ("-", ",", ".") + tuple("67890") + tuple("yuiophjklnm")
+    + tuple(f"f{n}" for n in range(7, 13))
+)
+
 DEFAULTS = {
     "question": "What are you doing?",
     "interval_minutes": 15,
     "default_pause_minutes": 60,
+    "pause_key": "-",
     "min_chars": 30,
     "log_dir": "log",
     "ask_on_start": False,
@@ -131,6 +141,18 @@ def question_text(cfg: dict) -> str:
     """Shown exactly as written in the config - no forced upper case."""
     text = str(cfg.get("question") or "").strip()
     return text or DEFAULTS["question"]
+
+
+def pause_key(cfg: dict) -> str:
+    """Which key opens the pause row while the right Shift is held."""
+    raw = str(cfg.get("pause_key") or DEFAULTS["pause_key"]).strip().lower()
+    if raw in PAUSE_KEYS:
+        return raw
+    log_error(
+        f"pause_key {raw!r} is not one of the keys on the right of the keyboard "
+        f"({' '.join(PAUSE_KEYS)}); using {DEFAULTS['pause_key']}"
+    )
+    return DEFAULTS["pause_key"]
 
 
 def sheep_label(cfg: dict) -> str:
