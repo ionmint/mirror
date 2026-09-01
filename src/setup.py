@@ -82,6 +82,14 @@ def ask_number(question: str, default, minimum: float = 0, whole: bool = True):
         return int(value) if whole else value
 
 
+def ask_pause_key(question: str, default: str) -> str:
+    while True:
+        answer = ask(question, default).lower()
+        if answer in core.PAUSE_KEYS:
+            return answer
+        print("      Mirror cannot use that one: pick from the list above.")
+
+
 # --------------------------------------------------------------------------- #
 # environment
 # --------------------------------------------------------------------------- #
@@ -262,6 +270,7 @@ def summary(cfg: dict) -> None:
         ("Question", core.question_text(cfg)),
         ("Asks every", f"{core.num(cfg.get('interval_minutes'), 15, 0.05):g} minutes"),
         ("Minimum length", str(int(core.num(cfg.get("min_chars"), 30, 0)))),
+        ("Pause row", f"right Shift + {core.pause_key(cfg).upper()}"),
         ("Journal folder", str(folder)),
         ("Folder writable", "yes" if writable(folder) else "NO"),
         ("Autostart", "on" if SHORTCUT.exists() else "off"),
@@ -289,6 +298,15 @@ def configure(raw: dict) -> dict:
         "Folder for the journal files (enter = inside this one)",
         str(values.get("log_dir", core.DEFAULTS["log_dir"])),
     )
+    print()
+    print("   The pause row hides behind the sheep, and behind the right Shift")
+    print("   plus one key. Anything on the right of the keyboard:")
+    print("      -  ,  .    6 7 8 9 0    y u i o p h j k l n m    f7 ... f12")
+    pause = ask_pause_key(
+        "Key that opens the pause row",
+        str(values.get("pause_key", core.DEFAULTS["pause_key"])),
+    )
+
     current_games = values.get("always_defer_processes") or []
     print()
     print("   Games during which the question must not show up.")
@@ -303,6 +321,7 @@ def configure(raw: dict) -> dict:
     cfg["interval_minutes"] = interval
     cfg["min_chars"] = minimum
     cfg["log_dir"] = folder
+    cfg["pause_key"] = pause
     cfg["always_defer_processes"] = (
         [] if games.strip().lower() in ("none", "no", "-", "") else
         [piece.strip() for piece in games.split(",") if piece.strip()]
