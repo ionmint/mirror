@@ -28,7 +28,7 @@ PID_PATH = BASE_DIR / "mirror.pid"
 ERROR_LOG = BASE_DIR / "mirror.log"
 STATE_PATH = BASE_DIR / ".mirror_state.json"
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 LOCK_PORT = 49731          # bound only to act as a single-instance lock
 TICK_SECONDS = 5           # how often the clock is checked
 SHEEP_EMOJI = "\U0001F411"
