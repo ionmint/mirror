@@ -11,7 +11,7 @@ remember to write one.
 
 **[Download the latest release](https://github.com/ionmint/mirror/releases/latest)**,
 extract it anywhere, then **double click `install.bat`**. It finds Python, asks
-five questions, writes `config.json`, sets up autostart and launches Mirror.
+six questions, writes `config.json`, sets up autostart and launches Mirror.
 
 To move it to another PC: copy the folder (the `.bat` files and `src\` are enough,
 the rest is recreated) and run `install.bat` there.
@@ -83,17 +83,21 @@ Autostart is a shortcut in your Startup folder (`shell:startup` → `Mirror.lnk`
 | **Enter** | send the answer and close the screen |
 | **Shift+Enter** | new line inside the answer |
 | **Ctrl+V** | paste |
+| **Right Shift + -** | show the pause row, and hide it again |
 | **Esc**, the **X** | do nothing: you leave by answering or pausing |
 | **Ctrl+Alt+Shift+Q** | escape hatch (see below) |
 
 The **🐑** button at the bottom right is a switch: click it and the pause row
-appears, click it again and it folds away.
+appears, click it again and it folds away. **Right Shift + -** does the same
+thing, and it is the reason the screen needs no mouse at all: the sheep was the
+last control without a key of its own.
 
 ```
    pause for [ 60 ] minutes   [ PAUSE ]
 ```
 
-Type the minutes and press PAUSE: the screen closes **without writing anything**
+The cursor is already in the field: type the minutes and press **Enter**, or the
+PAUSE button if you would rather. The screen closes **without writing anything**
 to the journal and stays away for that long. For a really long break just use a
 big number (`600` is ten hours).
 
@@ -172,6 +176,19 @@ With `min_chars: 0` only the "not empty" rule remains.
 There is no pause field in sight, only the sheep. That is deliberate friction — a
 pause button within easy reach turns into a skip button.
 
+The way in from the keyboard is **Right Shift + -**, which the install lets you
+change: `pause_key` takes any key from the right of the keyboard, so the
+shortcut sits under the same hand as the right Shift itself.
+
+`-` `,` `.`, `6` to `0`, `y u i o p h j k l n m` and `f7` to `f12`. It reads the
+key by its position, not by the character printed on it, so the Italian and the
+UK layout behave the same and Caps Lock changes nothing.
+
+The **right** Shift matters. On a key from that side of the keyboard the shifted
+character is one you reach for with the *left* Shift, so the shortcut stays out
+of the way of writing: with the default, Right Shift + `-` opens the pause row
+while left Shift + `-` still types `_` as always.
+
 ### A screen you cannot skip
 `Esc`, the X and `Ctrl+C` close nothing. The only ways out are answering and
 pausing.
@@ -242,6 +259,7 @@ you feel like it.
 | `log_dir` | `"log"` | journal folder; an absolute path works too |
 | `always_defer_processes` | `[]` | executables that always make it wait |
 | `default_pause_minutes` | `60` | what the pause field starts at |
+| `pause_key` | `"-"` | which key, held with the **right** Shift, opens the pause row. Right of the keyboard only: `- , .`, `6`–`0`, `y u i o p h j k l n m`, `f7`–`f12` |
 | `ask_on_start` | `false` | `true` = ask right away instead of waiting |
 | `width_fraction` | `0.3333` | box width as a share of the screen |
 | `on_fullscreen_app` | `"defer"` | `defer` \| `show` \| `defer_presentation` |
